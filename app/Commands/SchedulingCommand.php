@@ -82,7 +82,6 @@ class SchedulingCommand extends Command
         $disk = Storage::disk('local');
 
         if (! $disk->exists('.laravel-schedule')) {
-            $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
             $timeZone = $this->getSystemTimeZone($exitCode);
 
             if ($exitCode > 0) {
@@ -103,6 +102,7 @@ class SchedulingCommand extends Command
     {
         switch (true) {
             case Str::contains(php_uname('s'), 'Darwin'):
+                $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
                 return ltrim(exec('sudo systemsetup -gettimezone', $_, $exitCode), 'Time Zone: ');
             case Str::contains(php_uname('s'), 'Linux'):
                 return ltrim(exec('cat /etc/timezone'));
