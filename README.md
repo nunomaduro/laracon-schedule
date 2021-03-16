@@ -6,7 +6,7 @@
 
 ## 🚀 Quick start
 
-> **Requires [PHP 7.4+](https://php.net/releases/), MacOS**
+> **Requires [PHP 7.4+](https://php.net/releases/), Linux or MacOS**
 
 ```
 # First, install:
