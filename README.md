@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/nunomaduro/laracon-schedule/master/art/readme.png" width="882" alt="Laracon Schedule Preview">
 </p>
 
-**Laracon Schedule** is a command-line tool that gives you the Laracon Schedule in your timezone.
+**Laracon Schedule** a command-line tool that gives you the Laracon Online schedule in your timezone.
 
 ## 🚀 Quick start
 
