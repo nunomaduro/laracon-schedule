@@ -6,6 +6,8 @@
 
 ## 🚀 Quick start
 
+> **Requires [PHP 7.4+](https://php.net/releases/), MacOS**
+
 ```
 # First, install:
 composer global require nunomaduro/laracon-schedule
