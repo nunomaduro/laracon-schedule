@@ -55,7 +55,28 @@ class SchedulingCommand extends Command
         $this->line("    <options=bold,reverse;fg=magenta> LARACON ONLINE 2021 </>");
         $this->line('');
 
-        $this->line('    Your timezone: ' . $userTimeZone . '.');
+        $this->line('    Your timezone: ' . $userTimeZone);
+
+        $startsAt = '2021-03-17 10:00';
+
+        $hoursLeft = Carbon::parse($startsAt, 'America/New_York')
+                ->setTimezone($userTimeZone)
+                ->diffInHours(now(), false);
+
+        $minutesLeft = Carbon::parse($startsAt, 'America/New_York')
+                ->setTimezone($userTimeZone)
+                ->diffInMinutes(now(), false);
+
+        if ($hoursLeft < 0) {
+            $hoursLeft = abs($hoursLeft);
+            $this->line("    Event status : Starts in $hoursLeft hours.");
+        } elseif ($minutesLeft < 0) {
+            $minutesLeft = abs($minutesLeft);
+            $this->line("    Event status : Starts in $minutesLeft minutes.");
+        } else {
+            $this->line("    Event status : Already started.");
+        }
+
         $this->line('');
         collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone) {
             $dateTimeAsString = Carbon::parse("2021-03-17 $schedule:00", 'America/New_York')
@@ -68,7 +89,7 @@ class SchedulingCommand extends Command
         $this->line('');
         $this->line('    <fg=magenta;options=bold>Join the community:</> ');
         $this->line('    Telegram: https://t.me/laracononline2021.');
-        $this->line('    Discord: https://discord.com/invite/mPZNm7A.');
+        $this->line('    Discord : https://discord.com/invite/mPZNm7A.');
         $this->line('');
     }
 
