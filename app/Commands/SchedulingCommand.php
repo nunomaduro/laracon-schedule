@@ -86,8 +86,7 @@ class SchedulingCommand extends Command
         $disk = Storage::disk('local');
 
         if (! $disk->exists('.laravel-schedule')) {
-            $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
-            $timeZone = ltrim(exec('sudo systemsetup -gettimezone', $_, $exitCode), 'Time Zone: ');
+            $timeZone = ltrim(exec('/bin/ls -l /etc/localtime|/usr/bin/cut -d"/" -f8,9', $_, $exitCode), 'Time Zone: ');
 
             if ($exitCode > 0) {
                 abort(500, 'Unable to retrieve timezone');
