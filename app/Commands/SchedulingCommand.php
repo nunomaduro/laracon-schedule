@@ -49,10 +49,6 @@ class SchedulingCommand extends Command
      */
     public function handle()
     {
-        if (! Str::contains(php_uname('s'), 'Darwin')) {
-            abort(401, 'Only Mac OS is supported at this time.');
-        }
-
         $userTimeZone = $this->getTimeZone();
 
         $this->line('');
@@ -86,8 +82,7 @@ class SchedulingCommand extends Command
         $disk = Storage::disk('local');
 
         if (! $disk->exists('.laravel-schedule')) {
-            $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
-            $timeZone = ltrim(exec('sudo systemsetup -gettimezone', $_, $exitCode), 'Time Zone: ');
+            $timeZone = $this->getSystemTimeZone($exitCode);
 
             if ($exitCode > 0) {
                 abort(500, 'Unable to retrieve timezone');
@@ -97,5 +92,22 @@ class SchedulingCommand extends Command
         }
 
         return $disk->get('.laravel-schedule');
+    }
+
+    /**
+     * @param &$exitCode
+     * @return string
+     */
+    private function getSystemTimeZone(&$exitCode): string
+    {
+        switch (true) {
+            case Str::contains(php_uname('s'), 'Darwin'):
+                $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
+                return ltrim(exec('sudo systemsetup -gettimezone', $_, $exitCode), 'Time Zone: ');
+            case Str::contains(php_uname('s'), 'Linux'):
+                return ltrim(exec('cat /etc/timezone'));
+            default:
+                abort(401, 'Only Mac OS and Linux are supported at this time.');
+        }
     }
 }
