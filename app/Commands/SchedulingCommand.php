@@ -55,7 +55,7 @@ class SchedulingCommand extends Command
         $this->line("    <options=bold,reverse;fg=magenta> LARACON ONLINE 2021 </>");
         $this->line('');
 
-        $this->line('    Your timezone: ' . $userTimeZone);
+        $this->line('    Your timezone: ' . $userTimeZone . '.');
 
         $startsAt = '2021-03-17 10:00';
 
