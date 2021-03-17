@@ -105,7 +105,7 @@ class SchedulingCommand extends Command
         if (! $disk->exists('.laravel-schedule')) {
             $timeZone = $this->getSystemTimeZone($exitCode);
 
-            if ($exitCode > 0) {
+            if ($exitCode > 0 || $timeZone === '') {
                 abort(500, 'Unable to retrieve timezone');
             }
 
@@ -126,7 +126,7 @@ class SchedulingCommand extends Command
                 $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
                 return ltrim(exec('sudo systemsetup -gettimezone', $_, $exitCode), 'Time Zone: ');
             case Str::contains(php_uname('s'), 'Linux'):
-                return ltrim(exec('cat /etc/timezone'));
+                return exec('date +%Z', $_, $exitCode);
             default:
                 abort(401, 'Only Mac OS and Linux are supported at this time.');
         }

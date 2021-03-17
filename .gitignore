@@ -3,4 +3,4 @@
 /.vscode
 /.vagrant
 .phpunit.result.cache
-.laracon-schedule
+.laravel-schedule
