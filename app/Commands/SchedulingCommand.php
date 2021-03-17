@@ -149,7 +149,7 @@ class SchedulingCommand extends Command
      */
     private function getIanaTimeZoneFromWindowsIdentifier($timeZoneId)
     {
-        $json = File::get('app/Commands/data/windowsZones.json');
+        $json =Storage::disk('windowsconfig')->get('windowsZones.json');
         $zones = collect(json_decode($json));
 
         $timeZone = $zones->firstWhere('windowsIdentifier', '=', $timeZoneId);
