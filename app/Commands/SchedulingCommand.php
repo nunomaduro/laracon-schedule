@@ -126,6 +126,10 @@ class SchedulingCommand extends Command
                 $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
                 return ltrim(exec('sudo systemsetup -gettimezone', $_, $exitCode), 'Time Zone: ');
             case Str::contains(php_uname('s'), 'Linux'):
+                if (file_exists('/etc/timezone')) {
+                    return ltrim(exec('cat /etc/timezone', $_, $exitCode));
+                }
+
                 return exec('date +%Z', $_, $exitCode);
             default:
                 abort(401, 'Only Mac OS and Linux are supported at this time.');
