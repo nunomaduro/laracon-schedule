@@ -35,12 +35,16 @@ class SchedulingCommand extends Command
     protected $scheduling = [
         '10:00' => '"Diving the Queue" by MOHAMED SAID',
         '11:00' => '"The final Laravel Service Container talk" by CHRISTOPH RUMPEL',
+        '12:00' => 'Break',
         '12:20' => '"Routing Laravel" by BOBBY BOUWMANN',
         '13:20' => '"Laravel Update" by TAYLOR OTWELL',
+        '14:20' => 'Break',
         '14:40' => '"Understanding Laravel broadcasting" by MARCEL POCIOT',
         '15:40' => '"Understanding Foundation: What ties everything together" by MIGUEL PIEDRAFITA',
+        '16:40' => 'Break',
         '17:00' => '"Doing small things with Livewire & Alpine" by CALEB PORZIO',
         '18:00' => '"Laravel\'s Artisan Console component" by NUNO MADURO',
+        '19:00' => 'Exit',
     ];
 
     /**
