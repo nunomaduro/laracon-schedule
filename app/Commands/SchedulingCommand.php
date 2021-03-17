@@ -13,6 +13,11 @@ use LaravelZero\Framework\Commands\Command;
 
 class SchedulingCommand extends Command
 {
+    const BREAK_LENGTH_MINUTES = 20;
+    const TALK_LENGTH_MINUTES = 60;
+    const BREAK_SLOT_NAME = 'Break';
+    const EXIT_SLOT_NAME = 'Exit';
+
     /**
      * The signature of the command.
      *
@@ -35,16 +40,16 @@ class SchedulingCommand extends Command
     protected $scheduling = [
         '10:00' => '"Diving the Queue" by MOHAMED SAID',
         '11:00' => '"The final Laravel Service Container talk" by CHRISTOPH RUMPEL',
-        '12:00' => 'Break',
+        '12:00' => self::BREAK_SLOT_NAME,
         '12:20' => '"Routing Laravel" by BOBBY BOUWMANN',
         '13:20' => '"Laravel Update" by TAYLOR OTWELL',
-        '14:20' => 'Break',
+        '14:20' => self::BREAK_SLOT_NAME,
         '14:40' => '"Understanding Laravel broadcasting" by MARCEL POCIOT',
         '15:40' => '"Understanding Foundation: What ties everything together" by MIGUEL PIEDRAFITA',
-        '16:40' => 'Break',
+        '16:40' => self::BREAK_SLOT_NAME,
         '17:00' => '"Doing small things with Livewire & Alpine" by CALEB PORZIO',
         '18:00' => '"Laravel\'s Artisan Console component" by NUNO MADURO',
-        '19:00' => 'Exit',
+        '19:00' => self::EXIT_SLOT_NAME,
     ];
 
     /**
@@ -63,6 +68,7 @@ class SchedulingCommand extends Command
         $this->line('    Your timezone: ' . $userTimeZone . '.');
 
         $startsAt = '2021-03-17 10:00';
+        $endsAt = '2021-03-17 19:00';
 
         $hoursLeft = Carbon::parse($startsAt, 'America/New_York')
                 ->setTimezone($userTimeZone)
@@ -78,17 +84,27 @@ class SchedulingCommand extends Command
         } elseif ($minutesLeft < 0) {
             $minutesLeft = abs($minutesLeft);
             $this->line("    Event status : Starts in $minutesLeft minutes.");
+        } elseif (Carbon::parse($endsAt, 'America/New_York')->setTimezone($userTimeZone)->isPast()) {
+            $this->line("    Event status : Event has ended. See you next time!");
         } else {
             $this->line("    Event status : Already started.");
         }
 
-        $this->line('');
-        collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone) {
-            $dateTimeAsString = Carbon::parse("2021-03-17 $schedule:00", 'America/New_York')
-                ->setTimezone($userTimeZone)
-                ->calendar();
+        $showedHappeningNowOnce = false;
 
-            $this->line("    <options=bold>$dateTimeAsString</> - $talk");
+        $this->line('');
+        collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone, &$showedHappeningNowOnce) {
+            $dateTime = Carbon::parse("2021-03-17 $schedule:00", 'America/New_York')
+                ->setTimezone($userTimeZone);
+
+            $lineOptions = 'bold';
+
+            if (! $showedHappeningNowOnce && $this->happeningNow($dateTime, $userTimeZone, $talk)) {
+                $lineOptions = 'bold,reverse;fg=yellow';
+                $showedHappeningNowOnce = true;
+            }
+
+            $this->line("    <options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
         });
 
         $this->line('');
@@ -161,5 +177,21 @@ class SchedulingCommand extends Command
         abort_if(is_null($timeZone), 401, 'Windows time zone not found.');
 
         return head($timeZone->iana);
+    }
+
+    private function happeningNow(Carbon $dateTime, string $userTimeZone, string $talk): bool
+    {
+        if ($talk === self::EXIT_SLOT_NAME) {
+            return false;
+        }
+
+        $length = $talk === self::BREAK_SLOT_NAME
+            ? self::BREAK_LENGTH_MINUTES
+            : self::TALK_LENGTH_MINUTES;
+
+        return Carbon::now($userTimeZone)->between(
+            $dateTime,
+            $dateTime->copy()->addMinutes($length)
+        );
     }
 }
