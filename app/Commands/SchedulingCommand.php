@@ -5,6 +5,7 @@ namespace App\Commands;
 use DateTimeZone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Carbon\Factory;
@@ -131,8 +132,30 @@ class SchedulingCommand extends Command
                 }
 
                 return exec('date +%Z', $_, $exitCode);
+            case Str::contains(php_uname('s'), 'Windows'):
+                return ltrim($this->getIanaTimeZoneFromWindowsIdentifier(exec('tzutil /g', $_, $exitCode)));
             default:
-                abort(401, 'Only Mac OS and Linux are supported at this time.');
+                abort(401, 'Your OS is not supported at this time.');
         }
+    }
+
+    /**
+     * Returns an IANA time zone string from a Microsoft Windows time zone identifier
+     *  `./data/windowsZones.json` file content from windowsZones.xml
+     *  https://github.com/unicode-org/cldr/blob/master/common/supplemental/windowsZones.xml
+     *
+     * @param string $timeZoneId Windows time zone identifier (i.e. 'E. South America Standard Time')
+     * @return string
+     */
+    private function getIanaTimeZoneFromWindowsIdentifier($timeZoneId)
+    {
+        $json = File::get('app/Commands/data/windowsZones.json');
+        $zones = collect(json_decode($json));
+
+        $timeZone = $zones->firstWhere('windowsIdentifier', '=', $timeZoneId);
+
+        abort_if(is_null($timeZone), 401, 'Windows time zone not found.');
+
+        return head($timeZone->iana);
     }
 }
