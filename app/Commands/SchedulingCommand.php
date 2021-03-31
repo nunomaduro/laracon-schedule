@@ -143,10 +143,7 @@ class SchedulingCommand extends Command
     private function getSystemTimeZone(&$exitCode): string
     {
         switch (true) {
-            case Str::contains(php_uname('s'), 'Darwin'):
-                $this->line('Please enter your "sudo" password so we can retrieve your timezone:');
-                return ltrim(exec('sudo systemsetup -gettimezone', $_, $exitCode), 'Time Zone: ');
-            case Str::contains(php_uname('s'), 'Linux'):
+            case Str::contains(php_uname('s'), ['Darwin', 'Linux']):
                 if (file_exists('/etc/timezone')) {
                     return ltrim(exec('cat /etc/timezone', $_, $exitCode));
                 }
