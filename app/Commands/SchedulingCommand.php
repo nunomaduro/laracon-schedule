@@ -14,7 +14,7 @@ use LaravelZero\Framework\Commands\Command;
 class SchedulingCommand extends Command
 {
     const BREAK_LENGTH_MINUTES = 20;
-    const TALK_LENGTH_MINUTES = 60;
+    const TALK_LENGTH_MINUTES = 30;
     const BREAK_SLOT_NAME = 'Break';
     const EXIT_SLOT_NAME = 'Exit';
 
@@ -38,18 +38,22 @@ class SchedulingCommand extends Command
      * @var array
      */
     protected $scheduling = [
-        '10:00' => '"Diving the Queue" by MOHAMED SAID',
-        '11:00' => '"The final Laravel Service Container talk" by CHRISTOPH RUMPEL',
-        '12:00' => self::BREAK_SLOT_NAME,
-        '12:20' => '"Routing Laravel" by BOBBY BOUWMANN',
-        '13:20' => '"Laravel Update" by TAYLOR OTWELL',
-        '14:20' => self::BREAK_SLOT_NAME,
-        '14:40' => '"Understanding Laravel broadcasting" by MARCEL POCIOT',
-        '15:40' => '"Understanding Foundation: What ties everything together" by MIGUEL PIEDRAFITA',
-        '16:40' => self::BREAK_SLOT_NAME,
-        '17:00' => '"Doing small things with Livewire & Alpine" by CALEB PORZIO',
-        '18:00' => '"Laravel\'s Artisan Console component" by NUNO MADURO',
-        '19:00' => self::EXIT_SLOT_NAME,
+        '14:00' => '"Asynchronous Laravel" by Mohamed Said',
+        '14:35' => '"Bugfixing Your Career" by Diana Scharf',
+        '15:10' => '"Getting The Most Out Of Cashier Stripe & Paddle" by Dries Vints',
+        '15:45' => '"Why Refactoring Is The Best Tool To Write Better Code" by Christoph Rumpel',
+        '16:20' => self::BREAK_SLOT_NAME,
+        '16:40' => '"Laravel Update" by Taylor Otwell',
+        '17:40' => 'LIGHTNING TALKS',
+        '18:40' => self::BREAK_SLOT_NAME,
+        '19:00' => '"Types In Laravel" by Nuno Maduro',
+        '19:35' => '"Top Ten Tailwind Tricks" by Caneco',
+        '20:10' => '"How To Write Delightful Documentation" by Allie Nimmons',
+        '20:45' => '"Think Like a Hacker" by Stephen Rees-Carter',
+        '21:20' => self::BREAK_SLOT_NAME,
+        '21:40' => '"Manage SEO with Laravel and Nova" by Kristin Collins',
+        '22:15' => '"Inertia.js Forms, Modals & SSR" by Jonathan Reinink',
+        '22:50' => '"Practical Laravel Unit Testing" by Colin DeCarlo',
     ];
 
     /**
@@ -62,19 +66,19 @@ class SchedulingCommand extends Command
         $userTimeZone = $this->getTimeZone();
 
         $this->line('');
-        $this->line("    <options=bold,reverse;fg=magenta> LARACON ONLINE 2021 </>");
+        $this->line("    <options=bold,reverse;fg=magenta> LARACON ONLINE SUMMER 2021 </>");
         $this->line('');
 
         $this->line('    Your timezone: ' . $userTimeZone . '.');
 
-        $startsAt = '2021-03-17 10:00';
-        $endsAt = '2021-03-17 19:00';
+        $startsAt = '2021-09-01 13:50';
+        $endsAt = '2021-09-01 23:25';
 
-        $hoursLeft = Carbon::parse($startsAt, 'America/New_York')
+        $hoursLeft = Carbon::parse($startsAt, 'UTC')
                 ->setTimezone($userTimeZone)
                 ->diffInHours(now(), false);
 
-        $minutesLeft = Carbon::parse($startsAt, 'America/New_York')
+        $minutesLeft = Carbon::parse($startsAt, 'UTC')
                 ->setTimezone($userTimeZone)
                 ->diffInMinutes(now(), false);
 
@@ -84,7 +88,7 @@ class SchedulingCommand extends Command
         } elseif ($minutesLeft < 0) {
             $minutesLeft = abs($minutesLeft);
             $this->line("    Event status : Starts in $minutesLeft minutes.");
-        } elseif (Carbon::parse($endsAt, 'America/New_York')->setTimezone($userTimeZone)->isPast()) {
+        } elseif (Carbon::parse($endsAt, 'UTC')->setTimezone($userTimeZone)->isPast()) {
             $this->line("    Event status : Event has ended. See you next time!");
         } else {
             $this->line("    Event status : Already started.");
@@ -94,7 +98,7 @@ class SchedulingCommand extends Command
 
         $this->line('');
         collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone, &$showedHappeningNowOnce) {
-            $dateTime = Carbon::parse("2021-03-17 $schedule:00", 'America/New_York')
+            $dateTime = Carbon::parse("2021-09-01 $schedule:00", 'UTC')
                 ->setTimezone($userTimeZone);
 
             $lineOptions = 'bold';
