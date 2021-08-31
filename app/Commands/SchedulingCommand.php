@@ -13,10 +13,11 @@ use LaravelZero\Framework\Commands\Command;
 
 class SchedulingCommand extends Command
 {
-    const BREAK_LENGTH_MINUTES = 20;
-    const TALK_LENGTH_MINUTES = 30;
-    const BREAK_SLOT_NAME = 'Break';
-    const EXIT_SLOT_NAME = 'Exit';
+    public const BREAK_LENGTH_MINUTES = 20;
+    public const TALK_LENGTH_MINUTES = 30;
+    public const BREAK_SLOT_NAME = 'Break';
+    public const EXIT_SLOT_NAME = 'Exit';
+    public const LIGHTNING_TALKS_SLOT_NAME = 'LIGHTNING TALKS';
 
     /**
      * The signature of the command.
@@ -35,7 +36,7 @@ class SchedulingCommand extends Command
     /**
      * The conference schedule.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $scheduling = [
         '14:00' => '"Asynchronous Laravel" by Mohamed Said',
@@ -44,7 +45,7 @@ class SchedulingCommand extends Command
         '15:45' => '"Why Refactoring Is The Best Tool To Write Better Code" by Christoph Rumpel',
         '16:20' => self::BREAK_SLOT_NAME,
         '16:40' => '"Laravel Update" by Taylor Otwell',
-        '17:40' => 'LIGHTNING TALKS',
+        '17:40' => self::LIGHTNING_TALKS_SLOT_NAME,
         '18:40' => self::BREAK_SLOT_NAME,
         '19:00' => '"Types In Laravel" by Nuno Maduro',
         '19:35' => '"Top Ten Tailwind Tricks" by Caneco',
@@ -54,6 +55,19 @@ class SchedulingCommand extends Command
         '21:40' => '"Manage SEO with Laravel and Nova" by Kristin Collins',
         '22:15' => '"Inertia.js Forms, Modals & SSR" by Jonathan Reinink',
         '22:50' => '"Practical Laravel Unit Testing" by Colin DeCarlo',
+    ];
+
+    /**
+     * The lightning talks schedule.
+     *
+     * @var array<int, string>
+     */
+    protected $lightningTalks = [
+        '"Learning In Public" by Zuzana Kunckova',
+        '"Tailwind Grid" by Shruti Balasa',
+        '"Inclusive Language Practices" by Marje Holmstrom-Sabo',
+        '"An Introduction To Snapshot Testing" by Freek Van der Herten',
+        '"Level Up Your App With Composite Primary Keys" by Alex Wulf'
     ];
 
     /**
@@ -109,6 +123,10 @@ class SchedulingCommand extends Command
             }
 
             $this->line("    <options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
+
+            if ($talk === self::LIGHTNING_TALKS_SLOT_NAME) {
+                collect($this->lightningTalks)->each(fn($talk) => $this->line("      - {$talk}"));
+            }
         });
 
         $this->line('');
