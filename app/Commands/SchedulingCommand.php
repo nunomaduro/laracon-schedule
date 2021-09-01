@@ -24,7 +24,7 @@ class SchedulingCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'scheduling';
+    protected $signature = 'scheduling {--no-cache : Clears the cached timezone.}';
 
     /**
      * The description of the command.
@@ -144,18 +144,23 @@ class SchedulingCommand extends Command
     public function getTimeZone()
     {
         $disk = Storage::disk('local');
+        $filename = '.laravel-schedule';
 
-        if (! $disk->exists('.laravel-schedule')) {
+        if ($this->option('no-cache') && $disk->exists($filename)) {
+            $disk->delete($filename);
+        }
+
+        if (! $disk->exists($filename)) {
             $timeZone = $this->getSystemTimeZone($exitCode);
 
             if ($exitCode > 0 || $timeZone === '') {
                 abort(500, 'Unable to retrieve timezone');
             }
 
-            $disk->put('.laravel-schedule', $timeZone);
+            $disk->put($filename, $timeZone);
         }
 
-        return $disk->get('.laravel-schedule');
+        return $disk->get($filename);
     }
 
     /**
