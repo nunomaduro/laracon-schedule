@@ -24,7 +24,7 @@ class SchedulingCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'scheduling {--no-cache : Clears the cached timezone.}';
+    protected $signature = 'scheduling {--late=0 : Adjust all times by this many minutes.} {--no-cache : Clears the cached timezone.}';
 
     /**
      * The description of the command.
@@ -78,22 +78,29 @@ class SchedulingCommand extends Command
     public function handle()
     {
         $userTimeZone = $this->getTimeZone();
+        $late = (int) $this->option('late');
 
         $this->line('');
         $this->line("    <options=bold,reverse;fg=magenta> LARACON ONLINE SUMMER 2021 </>");
         $this->line('');
 
         $this->line('    Your timezone: ' . $userTimeZone . '.');
+        if ($late <> 0) {
+            $this->line('    Laracon is running ' . $late .' minutes late.');
+        }
+
 
         $startsAt = '2021-09-01 13:50';
         $endsAt = '2021-09-01 23:25';
 
         $hoursLeft = Carbon::parse($startsAt, 'UTC')
                 ->setTimezone($userTimeZone)
+                ->addMinutes($late)
                 ->diffInHours(now(), false);
 
         $minutesLeft = Carbon::parse($startsAt, 'UTC')
                 ->setTimezone($userTimeZone)
+                ->addMinutes($late)
                 ->diffInMinutes(now(), false);
 
         if ($hoursLeft < 0) {
@@ -111,8 +118,9 @@ class SchedulingCommand extends Command
         $showedHappeningNowOnce = false;
 
         $this->line('');
-        collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone, &$showedHappeningNowOnce) {
+        collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone, $late, &$showedHappeningNowOnce) {
             $dateTime = Carbon::parse("2021-09-01 $schedule:00", 'UTC')
+                ->addMinutes($late)
                 ->setTimezone($userTimeZone);
 
             $lineOptions = 'bold';
