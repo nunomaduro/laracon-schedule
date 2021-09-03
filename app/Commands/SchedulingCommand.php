@@ -18,6 +18,11 @@ class SchedulingCommand extends Command
     public const BREAK_SLOT_NAME = 'Break';
     public const EXIT_SLOT_NAME = 'Exit';
     public const LIGHTNING_TALKS_SLOT_NAME = 'LIGHTNING TALKS';
+    public const TITLE = 'LARACON ONLINE SUMMER 2021';
+    public const TIMEZONE = 'UTC';
+    public const DATE = '2021-09-01';
+    public const STARTS_AT_TIME = '13:50';
+    public const ENDS_AT_TIME = '23:25';
 
     /**
      * The signature of the command.
@@ -81,7 +86,7 @@ class SchedulingCommand extends Command
         $late = (int) $this->option('late');
 
         $this->line('');
-        $this->line("    <options=bold,reverse;fg=magenta> LARACON ONLINE SUMMER 2021 </>");
+        $this->line('    <options=bold,reverse;fg=magenta>' . self::TITLE . '</>');
         $this->line('');
 
         $this->line('    Your timezone: ' . $userTimeZone . '.');
@@ -89,16 +94,15 @@ class SchedulingCommand extends Command
             $this->line('    Laracon is running ' . $late .' minutes late.');
         }
 
+        $startsAt = self::DATE . ' ' . self::STARTS_AT_TIME;
+        $endsAt = self::DATE . ' ' . self::ENDS_AT_TIME;
 
-        $startsAt = '2021-09-01 13:50';
-        $endsAt = '2021-09-01 23:25';
-
-        $hoursLeft = Carbon::parse($startsAt, 'UTC')
+        $hoursLeft = Carbon::parse($startsAt, self::TIMEZONE)
                 ->setTimezone($userTimeZone)
                 ->addMinutes($late)
                 ->diffInHours(now(), false);
 
-        $minutesLeft = Carbon::parse($startsAt, 'UTC')
+        $minutesLeft = Carbon::parse($startsAt, self::TIMEZONE)
                 ->setTimezone($userTimeZone)
                 ->addMinutes($late)
                 ->diffInMinutes(now(), false);
@@ -109,7 +113,7 @@ class SchedulingCommand extends Command
         } elseif ($minutesLeft < 0) {
             $minutesLeft = abs($minutesLeft);
             $this->line("    Event status : Starts in $minutesLeft minutes.");
-        } elseif (Carbon::parse($endsAt, 'UTC')->setTimezone($userTimeZone)->isPast()) {
+        } elseif (Carbon::parse($endsAt, self::TIMEZONE)->setTimezone($userTimeZone)->isPast()) {
             $this->line("    Event status : Event has ended. See you next time!");
         } else {
             $this->line("    Event status : Already started.");
@@ -119,7 +123,7 @@ class SchedulingCommand extends Command
 
         $this->line('');
         collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone, $late, &$showedHappeningNowOnce) {
-            $dateTime = Carbon::parse("2021-09-01 $schedule:00", 'UTC')
+            $dateTime = Carbon::parse(self::DATE . " $schedule:00", self::TIMEZONE)
                 ->addMinutes($late)
                 ->setTimezone($userTimeZone);
 
