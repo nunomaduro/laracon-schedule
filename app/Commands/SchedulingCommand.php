@@ -2,13 +2,9 @@
 
 namespace App\Commands;
 
-use DateTimeZone;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Carbon\Factory;
 use LaravelZero\Framework\Commands\Command;
 
 class SchedulingCommand extends Command
