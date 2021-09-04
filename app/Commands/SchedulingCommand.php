@@ -19,6 +19,7 @@ class SchedulingCommand extends Command
     public const DATE = '2021-09-01';
     public const STARTS_AT_TIME = '13:50';
     public const ENDS_AT_TIME = '23:25';
+    public const INDENT = '    ';
 
     /**
      * The signature of the command.
@@ -92,12 +93,12 @@ class SchedulingCommand extends Command
         $late = (int) $this->option('late');
 
         $this->line('');
-        $this->line('    <options=bold,reverse;fg=magenta>' . self::TITLE . '</>');
+        $this->line(self::INDENT . '<options=bold,reverse;fg=magenta>' . self::TITLE . '</>');
         $this->line('');
 
-        $this->line('    Your timezone: ' . $userTimeZone . '.');
+        $this->line(self::INDENT . 'Your timezone: ' . $userTimeZone . '.');
         if ($late <> 0) {
-            $this->line('    Laracon is running ' . $late .' minutes late.');
+            $this->line(self::INDENT . 'Laracon is running ' . $late .' minutes late.');
         }
 
         $startsAt = self::DATE . ' ' . self::STARTS_AT_TIME;
@@ -115,14 +116,14 @@ class SchedulingCommand extends Command
 
         if ($hoursLeft < 0) {
             $hoursLeft = abs($hoursLeft);
-            $this->line("    Event status : Starts in $hoursLeft hours.");
+            $this->line(self::INDENT . "Event status : Starts in $hoursLeft hours.");
         } elseif ($minutesLeft < 0) {
             $minutesLeft = abs($minutesLeft);
-            $this->line("    Event status : Starts in $minutesLeft minutes.");
+            $this->line(self::INDENT . "Event status : Starts in $minutesLeft minutes.");
         } elseif (Carbon::parse($endsAt, self::TIMEZONE)->setTimezone($userTimeZone)->isPast()) {
-            $this->line("    Event status : Event has ended. See you next time!");
+            $this->line(self::INDENT . "Event status : Event has ended. See you next time!");
         } else {
-            $this->line("    Event status : Already started.");
+            $this->line(self::INDENT . "Event status : Already started.");
         }
 
         $showedHappeningNowOnce = false;
@@ -140,7 +141,7 @@ class SchedulingCommand extends Command
                 $showedHappeningNowOnce = true;
             }
 
-            $this->line("    <options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
+            $this->line(self::INDENT . "<options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
 
             if ($talk === self::LIGHTNING_TALKS_SLOT_NAME) {
                 collect($this->lightningTalks)->each(fn($talk) => $this->line("      - {$talk}"));
@@ -148,9 +149,9 @@ class SchedulingCommand extends Command
         });
 
         $this->line('');
-        $this->line('    <fg=magenta;options=bold>Join the community:</> ');
+        $this->line(self::INDENT . '<fg=magenta;options=bold>Join the community:</> ');
         foreach($this->community as $platform => $link){
-            $this->line("    $platform: $link");
+            $this->line(self::INDENT . "$platform: $link");
         }
         $this->line('');
     }
