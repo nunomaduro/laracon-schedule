@@ -72,6 +72,16 @@ class SchedulingCommand extends Command
     ];
 
     /**
+     * Community.
+     *
+     * @var array<string, string>
+     */
+    protected $community = [
+        'Telegram' => 'https://t.me/laracononline2021.',
+        'Discord' => 'https://discord.com/invite/mPZNm7A.'
+    ];
+
+    /**
      * Execute the console command.
      *
      * @return mixed
@@ -139,8 +149,9 @@ class SchedulingCommand extends Command
 
         $this->line('');
         $this->line('    <fg=magenta;options=bold>Join the community:</> ');
-        $this->line('    Telegram: https://t.me/laracononline2021.');
-        $this->line('    Discord : https://discord.com/invite/mPZNm7A.');
+        foreach($this->community as $platform => $link){
+            $this->line("    $platform: $link");
+        }
         $this->line('');
     }
 
