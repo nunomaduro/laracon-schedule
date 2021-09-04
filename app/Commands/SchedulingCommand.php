@@ -2,13 +2,9 @@
 
 namespace App\Commands;
 
-use DateTimeZone;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Carbon\Factory;
 use LaravelZero\Framework\Commands\Command;
 
 class SchedulingCommand extends Command
@@ -18,6 +14,12 @@ class SchedulingCommand extends Command
     public const BREAK_SLOT_NAME = 'Break';
     public const EXIT_SLOT_NAME = 'Exit';
     public const LIGHTNING_TALKS_SLOT_NAME = 'LIGHTNING TALKS';
+    public const TITLE = 'LARACON ONLINE SUMMER 2021';
+    public const TIMEZONE = 'UTC';
+    public const DATE = '2021-09-01';
+    public const STARTS_AT_TIME = '13:50';
+    public const ENDS_AT_TIME = '23:25';
+    public const INDENT = '    ';
 
     /**
      * The signature of the command.
@@ -71,6 +73,16 @@ class SchedulingCommand extends Command
     ];
 
     /**
+     * Community.
+     *
+     * @var array<string, string>
+     */
+    protected $community = [
+        'Telegram' => 'https://t.me/laracononline2021.',
+        'Discord' => 'https://discord.com/invite/mPZNm7A.'
+    ];
+
+    /**
      * Execute the console command.
      *
      * @return mixed
@@ -81,45 +93,44 @@ class SchedulingCommand extends Command
         $late = (int) $this->option('late');
 
         $this->line('');
-        $this->line("    <options=bold,reverse;fg=magenta> LARACON ONLINE SUMMER 2021 </>");
+        $this->line(self::INDENT . '<options=bold,reverse;fg=magenta>' . self::TITLE . '</>');
         $this->line('');
 
-        $this->line('    Your timezone: ' . $userTimeZone . '.');
+        $this->line(self::INDENT . 'Your timezone: ' . $userTimeZone . '.');
         if ($late <> 0) {
-            $this->line('    Laracon is running ' . $late .' minutes late.');
+            $this->line(self::INDENT . 'Laracon is running ' . $late .' minutes late.');
         }
 
+        $startsAt = self::DATE . ' ' . self::STARTS_AT_TIME;
+        $endsAt = self::DATE . ' ' . self::ENDS_AT_TIME;
 
-        $startsAt = '2021-09-01 13:50';
-        $endsAt = '2021-09-01 23:25';
-
-        $hoursLeft = Carbon::parse($startsAt, 'UTC')
+        $hoursLeft = Carbon::parse($startsAt, self::TIMEZONE)
                 ->setTimezone($userTimeZone)
                 ->addMinutes($late)
                 ->diffInHours(now(), false);
 
-        $minutesLeft = Carbon::parse($startsAt, 'UTC')
+        $minutesLeft = Carbon::parse($startsAt, self::TIMEZONE)
                 ->setTimezone($userTimeZone)
                 ->addMinutes($late)
                 ->diffInMinutes(now(), false);
 
         if ($hoursLeft < 0) {
             $hoursLeft = abs($hoursLeft);
-            $this->line("    Event status : Starts in $hoursLeft hours.");
+            $this->line(self::INDENT . "Event status : Starts in $hoursLeft hours.");
         } elseif ($minutesLeft < 0) {
             $minutesLeft = abs($minutesLeft);
-            $this->line("    Event status : Starts in $minutesLeft minutes.");
-        } elseif (Carbon::parse($endsAt, 'UTC')->setTimezone($userTimeZone)->isPast()) {
-            $this->line("    Event status : Event has ended. See you next time!");
+            $this->line(self::INDENT . "Event status : Starts in $minutesLeft minutes.");
+        } elseif (Carbon::parse($endsAt, self::TIMEZONE)->setTimezone($userTimeZone)->isPast()) {
+            $this->line(self::INDENT . "Event status : Event has ended. See you next time!");
         } else {
-            $this->line("    Event status : Already started.");
+            $this->line(self::INDENT . "Event status : Already started.");
         }
 
         $showedHappeningNowOnce = false;
 
         $this->line('');
         collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone, $late, &$showedHappeningNowOnce) {
-            $dateTime = Carbon::parse("2021-09-01 $schedule:00", 'UTC')
+            $dateTime = Carbon::parse(self::DATE . " $schedule:00", self::TIMEZONE)
                 ->addMinutes($late)
                 ->setTimezone($userTimeZone);
 
@@ -130,17 +141,18 @@ class SchedulingCommand extends Command
                 $showedHappeningNowOnce = true;
             }
 
-            $this->line("    <options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
+            $this->line(self::INDENT . "<options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
 
             if ($talk === self::LIGHTNING_TALKS_SLOT_NAME) {
-                collect($this->lightningTalks)->each(fn($talk) => $this->line("      - {$talk}"));
+                collect($this->lightningTalks)->each(fn($talk) => $this->line(self::INDENT . "  - {$talk}"));
             }
         });
 
         $this->line('');
-        $this->line('    <fg=magenta;options=bold>Join the community:</> ');
-        $this->line('    Telegram: https://t.me/laracononline2021.');
-        $this->line('    Discord : https://discord.com/invite/mPZNm7A.');
+        $this->line(self::INDENT . '<fg=magenta;options=bold>Join the community:</> ');
+        foreach($this->community as $platform => $link){
+            $this->line(self::INDENT . "$platform: $link");
+        }
         $this->line('');
     }
 
