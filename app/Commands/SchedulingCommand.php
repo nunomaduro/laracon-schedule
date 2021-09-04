@@ -144,7 +144,7 @@ class SchedulingCommand extends Command
             $this->line(self::INDENT . "<options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
 
             if ($talk === self::LIGHTNING_TALKS_SLOT_NAME) {
-                collect($this->lightningTalks)->each(fn($talk) => $this->line("      - {$talk}"));
+                collect($this->lightningTalks)->each(fn($talk) => $this->line(self::INDENT . "  - {$talk}"));
             }
         });
 
