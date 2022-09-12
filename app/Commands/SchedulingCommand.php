@@ -13,7 +13,8 @@ class SchedulingCommand extends Command
     public const TALK_LENGTH_MINUTES = 40;
     public const BREAK_SLOT_NAME = 'Break';
     public const EXIT_SLOT_NAME = 'Exit';
-    public const LIGHTNING_TALKS_SLOT_NAME = 'LIGHTNING TALKS';
+    public const LIGHTNING_TALKS_1 = 'LIGHTNING TALKS #1';
+    public const LIGHTNING_TALKS_2 = 'LIGHTNING TALKS #2';
     public const TITLE = 'LARACON ONLINE SUMMER 2022';
     public const TIMEZONE = 'UTC';
     public const DATE = '2022-09-14';
@@ -45,14 +46,14 @@ class SchedulingCommand extends Command
         '13:40' => '"Kubernetes and Laravel" by Bosun Egberinde',
         '14:20' => '"The future of Livewire" by Caleb Porzio',
         '15:00' => self::BREAK_SLOT_NAME,
-        '15:20' => self::LIGHTNING_TALKS_SLOT_NAME,
+        '15:20' => self::LIGHTNING_TALKS_1,
         '16:35' => '"Abstracting too Early" by Matt Stauffer',
         '17:15' => self::BREAK_SLOT_NAME,
         '17:35' => '"Laravel Update" by Taylor Otwell',
         '18:35' => '"Database Performance for Application Developers" by Aaro Francis',
         '19:15' => '"Christoph Dreams of Simple Code" by Christoph Rumpel',
         '19:55' => self::BREAK_SLOT_NAME,
-        '20:15' => self::LIGHTNING_TALKS_SLOT_NAME,
+        '20:15' => self::LIGHTNING_TALKS_2,
         '21:45' => '"Browsers are Magical Creatures" by Stephen Rees-Carter',
     ];
 
@@ -61,12 +62,15 @@ class SchedulingCommand extends Command
      *
      * @var array<int, string>
      */
-    protected $lightningTalks = [
+    protected $lightningTalks1 = [
         '"Sustainable Self-Care" by Marje Holmstrom-Sabo',
         '"Let\'s Get Physical: Database Internals and You" by Tim Martin',
         '"Deep Dive into Carbon" by Ralph J. Smit',
         '"UI and Component testing with Cypress" by Marcel Pociot',
-        '"The Hitchhiker\'s Guide to the Laravel Community" by Caneco',
+        '"The Hitchhiker\'s Guide to the Laravel Community" by Caneco'
+    ];
+
+    protected $lightningTalks2 = [
         '"Is there any problem Git interactive rebase can\'t solve?" by Rissa Jackson',
         '"Meaningful Mentorship" by Alex Six',
         '"I shall say... err define this only once" by Freek Van der Herten',
@@ -146,8 +150,11 @@ class SchedulingCommand extends Command
 
             $this->line(self::INDENT . "<options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
 
-            if ($talk === self::LIGHTNING_TALKS_SLOT_NAME) {
-                collect($this->lightningTalks)->each(fn($talk) => $this->line(self::INDENT . "  - {$talk}"));
+            if ($talk === self::LIGHTNING_TALKS_1) {
+                collect($this->lightningTalks1)->each(fn($talk) => $this->line(self::INDENT . "  - {$talk}"));
+            }
+            if ($talk === self::LIGHTNING_TALKS_2) {
+                collect($this->lightningTalks2)->each(fn($talk) => $this->line(self::INDENT . "  - {$talk}"));
             }
         });
 
