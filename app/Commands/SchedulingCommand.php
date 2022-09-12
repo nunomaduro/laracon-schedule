@@ -10,15 +10,15 @@ use LaravelZero\Framework\Commands\Command;
 class SchedulingCommand extends Command
 {
     public const BREAK_LENGTH_MINUTES = 20;
-    public const TALK_LENGTH_MINUTES = 30;
+    public const TALK_LENGTH_MINUTES = 40;
     public const BREAK_SLOT_NAME = 'Break';
     public const EXIT_SLOT_NAME = 'Exit';
     public const LIGHTNING_TALKS_SLOT_NAME = 'LIGHTNING TALKS';
-    public const TITLE = 'LARACON ONLINE SUMMER 2021';
+    public const TITLE = 'LARACON ONLINE SUMMER 2022';
     public const TIMEZONE = 'UTC';
-    public const DATE = '2021-09-01';
-    public const STARTS_AT_TIME = '13:50';
-    public const ENDS_AT_TIME = '23:25';
+    public const DATE = '2022-09-14';
+    public const STARTS_AT_TIME = '12:45';
+    public const ENDS_AT_TIME = '21:45';
     public const INDENT = '    ';
 
     /**
@@ -41,22 +41,19 @@ class SchedulingCommand extends Command
      * @var array<string, string>
      */
     protected $scheduling = [
-        '14:00' => '"Asynchronous Laravel" by Mohamed Said',
-        '14:35' => '"Bugfixing Your Career" by Diana Scharf',
-        '15:10' => '"Getting The Most Out Of Cashier Stripe & Paddle" by Dries Vints',
-        '15:45' => '"Why Refactoring Is The Best Tool To Write Better Code" by Christoph Rumpel',
-        '16:20' => self::BREAK_SLOT_NAME,
-        '16:40' => '"Laravel Update" by Taylor Otwell',
-        '17:40' => self::LIGHTNING_TALKS_SLOT_NAME,
-        '18:40' => self::BREAK_SLOT_NAME,
-        '19:00' => '"Types In Laravel" by Nuno Maduro',
-        '19:35' => '"Top Ten Tailwind Tricks" by Caneco',
-        '20:10' => '"How To Write Delightful Documentation" by Allie Nimmons',
-        '20:45' => '"Think Like a Hacker" by Stephen Rees-Carter',
-        '21:20' => self::BREAK_SLOT_NAME,
-        '21:40' => '"Manage SEO with Laravel and Nova" by Kristin Collins',
-        '22:15' => '"Inertia.js Forms, Modals & SSR" by Jonathan Reinink',
-        '22:50' => '"Practical Laravel Unit Testing" by Colin DeCarlo',
+        '13:00' => '"Not Quite My Type" by Kai Sassnowski',
+        '13:40' => '"Kubernetes and Laravel" by Bosun Egberinde',
+        '14:20' => '"The future of Livewire" by Caleb Porzio',
+        '15:00' => self::BREAK_SLOT_NAME,
+        '15:20' => self::LIGHTNING_TALKS_SLOT_NAME,
+        '16:35' => '"Abstracting too Early" by Matt Stauffer',
+        '17:15' => self::BREAK_SLOT_NAME,
+        '17:35' => '"Laravel Update" by Taylor Otwell',
+        '18:35' => '"Database Performance for Application Developers" by Aaro Francis',
+        '19:15' => '"Christoph Dreams of Simple Code" by Christoph Rumpel',
+        '19:55' => self::BREAK_SLOT_NAME,
+        '20:15' => self::LIGHTNING_TALKS_SLOT_NAME,
+        '21:45' => '"Browsers are Magical Creatures" by Stephen Rees-Carter',
     ];
 
     /**
@@ -65,11 +62,17 @@ class SchedulingCommand extends Command
      * @var array<int, string>
      */
     protected $lightningTalks = [
-        '"Learning In Public" by Zuzana Kunckova',
-        '"Tailwind Grid" by Shruti Balasa',
-        '"Inclusive Language Practices" by Marje Holmstrom-Sabo',
-        '"An Introduction To Snapshot Testing" by Freek Van der Herten',
-        '"Level Up Your App With Composite Primary Keys" by Alex Wulf'
+        '"Sustainable Self-Care" by Marje Holmstrom-Sabo',
+        '"Let\'s Get Physical: Database Internals and You" by Tim Martin',
+        '"Deep Dive into Carbon" by Ralph J. Smit',
+        '"UI and Component testing with Cypress" by Marcel Pociot',
+        '"The Hitchhiker\'s Guide to the Laravel Community" by Caneco',
+        '"Is there any problem Git interactive rebase can\'t solve?" by Rissa Jackson',
+        '"Meaningful Mentorship" by Alex Six',
+        '"I shall say... err define this only once" by Freek Van der Herten',
+        '"I can\'t believe it\'s not local!" by Chris Fidao',
+        '"Valid Variants of Validating Validation" by Luke Downing',
+        '"A Grab Bag of Useful Tips" by Colin DeCarlo'
     ];
 
     /**
