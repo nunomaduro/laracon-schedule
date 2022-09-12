@@ -114,7 +114,7 @@ class SchedulingCommand extends Command
         $this->line(self::INDENT.'<options=bold,reverse;bg=white;fg=bright-red> '.self::TITLE.' </>');
         $this->line('');
 
-        $this->line(self::INDENT.'Your timezone: '.Carbon::now()->setTimezone($userTimeZone)->format('T').'.');
+        $this->line(self::INDENT.'Your timezone: '.$userTimeZone.'.');
         if ($late != 0) {
             $this->line(self::INDENT.'Laracon is running '.$late.' minutes late.');
         }
