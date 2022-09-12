@@ -114,7 +114,7 @@ class SchedulingCommand extends Command
         $this->line(self::INDENT.'<options=bold,reverse;bg=white;fg=bright-red> '.self::TITLE.' </>');
         $this->line('');
 
-        $this->line(self::INDENT.'Your timezone: '.$userTimeZone.'.');
+        $this->line(self::INDENT.'Your timezone: '.Carbon::now()->setTimezone($userTimeZone)->format('T').'.');
         if ($late != 0) {
             $this->line(self::INDENT.'Laracon is running '.$late.' minutes late.');
         }
@@ -212,8 +212,9 @@ class SchedulingCommand extends Command
     {
         switch (true) {
             case Str::contains(php_uname('s'), ['Darwin', 'Linux']):
-                if (file_exists('/etc/timezone')) {
-                    return ltrim(exec('cat /etc/timezone', $_, $exitCode));
+                if (file_exists('/etc/localtime')) {
+                    $localTime = exec('ls -l /etc/localtime', $_, $exitCode);
+                    return ltrim(Str::after($localTime, 'zoneinfo/'));
                 }
 
                 return exec('date +%Z', $_, $exitCode);
