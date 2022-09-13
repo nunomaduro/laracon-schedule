@@ -216,6 +216,11 @@ class SchedulingCommand extends Command
                     return ltrim(exec('cat /etc/timezone', $_, $exitCode));
                 }
 
+                if (file_exists('/etc/localtime')) {
+                    $localTime = exec('ls -l /etc/localtime', $_, $exitCode);
+                    return ltrim(Str::after($localTime, 'zoneinfo/'));
+                }
+
                 return exec('date +%Z', $_, $exitCode);
             case Str::contains(php_uname('s'), 'Windows'):
                 return ltrim($this->getIanaTimeZoneFromWindowsIdentifier(exec('tzutil /g', $_, $exitCode)));
