@@ -212,6 +212,10 @@ class SchedulingCommand extends Command
     {
         switch (true) {
             case Str::contains(php_uname('s'), ['Darwin', 'Linux']):
+                if (file_exists('/etc/timezone')) {
+                    return ltrim(exec('cat /etc/timezone', $_, $exitCode));
+                }
+
                 if (file_exists('/etc/localtime')) {
                     $localTime = exec('ls -l /etc/localtime', $_, $exitCode);
                     return ltrim(Str::after($localTime, 'zoneinfo/'));
