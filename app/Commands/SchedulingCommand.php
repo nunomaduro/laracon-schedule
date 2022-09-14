@@ -61,7 +61,7 @@ class SchedulingCommand extends Command
         '16:35' => '<options=bold>"Abstracting too Early"</> by Matt Stauffer',
         '17:15' => self::BREAK_SLOT_NAME,
         '17:35' => '<options=bold>"Laravel Update"</> by Taylor Otwell',
-        '18:35' => '<options=bold>"Database Performance for Application Developers"</> by Aaro Francis',
+        '18:35' => '<options=bold>"Database Performance for Application Developers"</> by Aaron Francis',
         '19:15' => '<options=bold>"Christoph Dreams of Simple Code"</> by Christoph Rumpel',
         '19:55' => self::BREAK_SLOT_NAME,
         '20:15' => self::LIGHTNING_TALKS_2,
