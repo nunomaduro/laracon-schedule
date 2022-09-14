@@ -52,7 +52,7 @@ class SchedulingCommand extends Command
      *
      * @var array<string, string>
      */
-    protected $scheduling = [
+    protected array $scheduling = [
         '13:00' => '<options=bold>"Not Quite My Type"</> by Kai Sassnowski',
         '13:40' => '<options=bold>"Kubernetes and Laravel"</> by Bosun Egberinde',
         '14:20' => '<options=bold>"The future of Livewire"</> by Caleb Porzio',
@@ -73,7 +73,7 @@ class SchedulingCommand extends Command
      *
      * @var array<int, string>
      */
-    protected $lightningTalks1 = [
+    protected array $lightningTalksOne = [
         '<options=bold>"Sustainable Self-Care"</> by Marje Holmstrom-Sabo',
         '<options=bold>"Let\'s Get Physical: Database Internals and You"</> by Tim Martin',
         '<options=bold>"Deep Dive into Carbon"</> by Ralph J. Smit',
@@ -81,7 +81,7 @@ class SchedulingCommand extends Command
         '<options=bold>"The Hitchhiker\'s Guide to the Laravel Community"</> by Caneco',
     ];
 
-    protected $lightningTalks2 = [
+    protected array $lightningTalksTwo = [
         '<options=bold>"Is there any problem Git interactive rebase can\'t solve?"</> by Rissa Jackson',
         '<options=bold>"Meaningful Mentorship"</> by Alex Six',
         '<options=bold>"I shall say... err define this only once"</> by Freek Van der Herten',
@@ -95,17 +95,12 @@ class SchedulingCommand extends Command
      *
      * @var array<string, string>
      */
-    protected $community = [
+    protected array $community = [
         'Telegram' => 'https://t.me/+J0X0cCt2z8c5YTEy',
         'Discord' => 'https://discord.com/invite/mPZNm7A',
     ];
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    public function handle(): void
     {
         $userTimeZone = $this->getTimeZone();
         $late = (int) $this->option('late');
@@ -123,14 +118,14 @@ class SchedulingCommand extends Command
         $endsAt = self::DATE.' '.self::ENDS_AT_TIME;
 
         $hoursLeft = Carbon::parse($startsAt, self::TIMEZONE)
-                ->setTimezone($userTimeZone)
-                ->addMinutes($late)
-                ->diffInHours(now(), false);
+            ->setTimezone($userTimeZone)
+            ->addMinutes($late)
+            ->diffInHours(now(), false);
 
         $minutesLeft = Carbon::parse($startsAt, self::TIMEZONE)
-                ->setTimezone($userTimeZone)
-                ->addMinutes($late)
-                ->diffInMinutes(now(), false);
+            ->setTimezone($userTimeZone)
+            ->addMinutes($late)
+            ->diffInMinutes(now(), false);
 
         if ($hoursLeft < 0) {
             $hoursLeft = abs($hoursLeft);
@@ -147,7 +142,11 @@ class SchedulingCommand extends Command
         $showedHappeningNowOnce = false;
 
         $this->line('');
-        collect($this->scheduling)->each(function ($talk, $schedule) use ($userTimeZone, $late, &$showedHappeningNowOnce) {
+        collect($this->scheduling)->each(function ($talk, $schedule) use (
+            $userTimeZone,
+            $late,
+            &$showedHappeningNowOnce
+        ) {
             $dateTime = Carbon::parse(self::DATE." $schedule:00", self::TIMEZONE)
                 ->addMinutes($late)
                 ->setTimezone($userTimeZone);
@@ -162,10 +161,10 @@ class SchedulingCommand extends Command
             $this->line(self::INDENT."<options={$lineOptions}>{$dateTime->calendar()}</> - $talk");
 
             if ($talk === self::LIGHTNING_TALKS_1) {
-                collect($this->lightningTalks1)->each(fn ($talk) => $this->line(self::INDENT."  - {$talk}"));
+                collect($this->lightningTalksOne)->each(fn ($talk) => $this->line(self::INDENT."  - {$talk}"));
             }
             if ($talk === self::LIGHTNING_TALKS_2) {
-                collect($this->lightningTalks2)->each(fn ($talk) => $this->line(self::INDENT."  - {$talk}"));
+                collect($this->lightningTalksTwo)->each(fn ($talk) => $this->line(self::INDENT."  - {$talk}"));
             }
         });
 
@@ -182,7 +181,7 @@ class SchedulingCommand extends Command
      *
      * @return string
      */
-    public function getTimeZone()
+    public function getTimeZone(): string
     {
         $disk = Storage::disk('local');
         $filename = '.laravel-schedule';
@@ -201,29 +200,30 @@ class SchedulingCommand extends Command
             $disk->put($filename, $timeZone);
         }
 
-        return $disk->get($filename);
+        return str($disk->get($filename))->trim()->value();
     }
 
-    /**
-     * @param &$exitCode
-     * @return string
-     */
-    private function getSystemTimeZone(&$exitCode): string
+    private function getSystemTimeZone(int|null &$exitCode): string
     {
         switch (true) {
             case Str::contains(php_uname('s'), ['Darwin', 'Linux']):
                 if (file_exists('/etc/timezone')) {
-                    return ltrim(exec('cat /etc/timezone', $_, $exitCode));
+                    return str(exec('cat /etc/timezone', $_, $exitCode))->trim();
                 }
 
                 if (file_exists('/etc/localtime')) {
-                    $localTime = exec('ls -l /etc/localtime', $_, $exitCode);
-                    return ltrim(Str::after($localTime, 'zoneinfo/'));
+                    return str(
+                        exec('ls -l /etc/localtime', $_, $exitCode)
+                    )->after('zoneinfo/')->trim();
                 }
 
                 return exec('date +%Z', $_, $exitCode);
             case Str::contains(php_uname('s'), 'Windows'):
-                return ltrim($this->getIanaTimeZoneFromWindowsIdentifier(exec('tzutil /g', $_, $exitCode)));
+                return str(
+                    $this->getIanaTimeZoneFromWindowsIdentifier(
+                        exec('tzutil /g', $_, $exitCode)
+                    )
+                )->trim();
             default:
                 abort(401, 'Your OS is not supported at this time.');
         }
@@ -234,15 +234,14 @@ class SchedulingCommand extends Command
      *  `./data/windowsZones.json` file content from windowsZones.xml
      *  https://github.com/unicode-org/cldr/blob/master/common/supplemental/windowsZones.xml
      *
-     * @param  string  $timeZoneId Windows time zone identifier (i.e. 'E. South America Standard Time')
+     * @param  string  $timeZoneId  Windows time zone identifier (i.e. 'E. South America Standard Time')
      * @return string
      */
-    private function getIanaTimeZoneFromWindowsIdentifier($timeZoneId)
+    private function getIanaTimeZoneFromWindowsIdentifier(string $timeZoneId): string
     {
-        $json = Storage::disk('windowsconfig')->get('windowsZones.json');
-        $zones = collect(json_decode($json));
-
-        $timeZone = $zones->firstWhere('windowsIdentifier', '=', $timeZoneId);
+        $timeZone = collect(
+            json_decode(Storage::disk('data')->get('windowsZones.json'))
+        )->firstWhere('windowsIdentifier', '=', $timeZoneId);
 
         abort_if(is_null($timeZone), 401, 'Windows time zone not found.');
 

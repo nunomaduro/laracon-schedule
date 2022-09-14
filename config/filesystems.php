@@ -7,9 +7,9 @@ return [
             'driver' => 'local',
             'root' => getcwd(),
         ],
-        'windowsconfig' => [
+        'data' => [
             'driver' => 'local',
-            'root' => storage_path('../app/Commands/data'),
+            'root' => storage_path('../resources/data'),
         ],
     ],
 ];
