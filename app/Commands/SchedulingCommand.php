@@ -69,7 +69,7 @@ class SchedulingCommand extends Command
     ];
 
     /**
-     * The lightning talks schedule.
+     * The 1st lightning talks schedule.
      *
      * @var array<int, string>
      */
@@ -81,6 +81,11 @@ class SchedulingCommand extends Command
         '<options=bold>"The Hitchhiker\'s Guide to the Laravel Community"</> by Caneco',
     ];
 
+    /**
+     * The 2nd lightning talks schedule.
+     *
+     * @var array<int, string>
+     */
     protected array $lightningTalksTwo = [
         '<options=bold>"Is there any problem Git interactive rebase can\'t solve?"</> by Rissa Jackson',
         '<options=bold>"Meaningful Mentorship"</> by Alex Six',
